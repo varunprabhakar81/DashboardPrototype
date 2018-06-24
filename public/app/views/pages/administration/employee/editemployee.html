@@ -1,0 +1,87 @@
+<div class  "page-header" > 
+    <h1>Edit Employee</h1>
+</div>
+
+<br>
+
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link PrimaryInfoTab" ng-click="editEmployee.PrimaryInfoPhase();" ng-class="PrimaryInfoTab" data-toggle="tab" href="#" role="presentation" aria-controls="PrimaryInfoTab">Primary Information</a>
+    <a class="nav-item nav-link AdditionalInfoTab" ng-click="editEmployee.AdditionalInfoPhase();" ng-class="AdditionalInfoTab" data-toggle="tab" href="#" role="presentation" aria-controls="AdditionalInfoTab">Additional Information</a>
+  </div>
+</nav>
+
+<br>
+
+<!-- Phase One: Name -->
+<form name="editEmployee.PrimaryInfoForm" ng-show="editEmployee.phase1" ng-submit="editEmployee.updatePrimaryInfo(newPrimaryInfo, editEmployee.PrimaryInfoForm.$valid)" novalidate>
+    <!-- Name Div -->
+    <div ng-class="{ 'has-success':(editEmployee.PrimaryInfoForm.name.$valid && !editEmployee.PrimaryInfoForm.name.$pristine), 'has-error':(!editEmployee.PrimaryInfoForm.name.$valid && !editEmployee.PrimaryInfoForm.name.$pristine) || (!PrimaryInfoForm.name.$valid && PrimaryInfoForm.$submitted) }">
+        <!-- Name Input -->
+        <label>Employee Name:</label>
+        <input ng-disabled="editEmployee.disabled" class="form-control" type="text" name="name" placeholder="please enter employee name" ng-model="newPrimaryInfo.name" ng-pattern="/^[a-zA-Z\d\-_\s]+$/" required>
+        <!-- Name Validation -->
+        <p class="help-block" ng-show="(!editEmployee.PrimaryInfoForm.name.$pristine && PrimaryInfoForm.name.$error.required) || (editEmployee.PrimaryInfoForm.$submitted && editEmployee.PrimaryInfoForm.name.$error.required)">This field is required</p>
+        <ul ng-show="(!editEmployee.PrimaryInfoForm.name.$pristine && editEmployee.PrimaryInfoForm.name.$error.pattern)" class="help-block">
+            <li> Must not contain any special characters</li>
+        </ul>
+    </div>
+    <br>
+
+    <div ng-class="{ 'has-success':(editEmployee.PrimaryInfoForm.email.$valid && !editEmployee.PrimaryInfoForm.email.$pristine), 'has-error':(!editEmployee.PrimaryInfoForm.email.$valid && !editEmployee.PrimaryInfoForm.email.$pristine) || (!PrimaryInfoForm.email.$valid && PrimaryInfoForm.$submitted) }">
+        <!-- Name Input -->
+        <label>Email:</label>
+        <input ng-disabled="editEmployee.disabled" class="form-control" type="text" name="email" placeholder="please enter employee email" ng-model="newPrimaryInfo.email" ng-pattern="/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/" required>
+        <!-- Name Validation -->
+        <p class="help-block" ng-show="(!editEmployee.PrimaryInfoForm.email.$pristine && PrimaryInfoForm.email.$error.required) || (editEmployee.PrimaryInfoForm.$submitted && editEmployee.PrimaryInfoForm.email.$error.required)">This field is required</p>
+        <ul ng-show="(!editEmployee.PrimaryInfoForm.email.$pristine && editEmployee.PrimaryInfoForm.email.$error.pattern)" class="help-block">
+            <li> Please enter valid email format</li>
+        </ul>
+    </div>
+    <br>
+
+    <div>
+        <label>Position:</label>
+            <input class="form-control" ng-model="newPrimaryInfo.position" name="position"></input>
+   </div>
+
+    </div>
+    <br>
+
+    <div>
+        <label>Hourly Cost:</label>
+
+
+        <div class="input-group-prepend">
+             <span class="input-group-text">$</span>
+             <input class="form-control" type="number" ng-model="newPrimaryInfo.hourlycost" name="hourlycost"></input>
+        </div>
+    </div>
+    <br>
+
+    <!-- Submit Button -->
+    <button ng-disabled="editEmployee.disabled" class="btn btn-primary" type="submit">Update</button>
+</form>
+
+<form name="editEmployee.AdditionalInfoForm" ng-show="editEmployee.phase2" ng-submit="editEmployee.updateAdditionalInfo(newAdditionalInfo, editEmployee.AdditionalInfoForm.$valid)" novalidate>
+    <div>Placeholder</div>
+
+    <br>
+</form>
+
+<br>
+
+<!-- Custom Success Message -->
+<div class="row show-hide-message" ng-show="editEmployee.successMsg">
+    <div class="alert alert-success">{{ editEmployee.successMsg }}</div>
+</div>
+<!-- Custom Success Message -->
+
+<br>
+
+<!-- Custom Error Message -->
+<div class="row show-hide-message" ng-show="editEmployee.errorMsg">
+    <div class="alert alert-danger">{{ editEmployee.errorMsg }}</div>
+</div>
+<!-- Custom Error Message -->
+

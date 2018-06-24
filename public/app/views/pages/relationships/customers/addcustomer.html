@@ -1,0 +1,108 @@
+<div class  "page-header" > 
+
+<h1>Create Customer</h1>
+
+</div>
+
+<form name ="customerAddForm" ng-submit ="customer.addCustomer(customerData, customerAddForm.$valid)" novalidate>
+	<div class="form-group" ng-class="{'has-error': (!customerAddForm.customername.$valid && !customerAddForm.customername.$pristine) || (!customerAddForm.customername.$valid && customerAddForm.$submitted) , 'has-success': customerAddForm.customername.$valid && !customerAddForm.customername.$pristine}">
+
+		
+		<label>Customer Name:</label>
+		<input class="form-control" type="text" name="customername" placeholder="please enter customer name" ng-model="customer.customerData.customername" ng-pattern="/^[a-zA-Z\d\-_\s]+$/" required>
+		<p class="help-block" ng-show="(!customerAddForm.customername.$pristine && customerAddForm.customername.$error.required) || (customerAddForm.$submitted && customerAddForm.customername.$error.required)" >This field is required</p>
+
+		<ul ng-show="(!customerAddForm.customername.$pristine && customerAddForm.customername.$error.pattern)" class="help-block">
+			<li> Must not contain any special characters</li>
+		</ul>
+
+	</div>
+
+	<div>
+		<label>Office(s):</label>
+
+		<!-- !** FIX SELECT PICKER -->
+
+	<!-- 	<select class="form-control selectpicker" title="Please select a Office ..." multiple data-live-search="true" data-live-search-style="begins" ng-model="customer.customerData.offices" ng-options="offices.officename for offices in customer.offices"></select> -->
+
+	<select class="form-control" title="Please select a Office ..." multiple data-live-search="true" data-live-search-style="begins" ng-model="customer.customerData.offices" ng-options="offices.officename for offices in customer.offices"></select>
+
+		<p class="help-block" ng-show="(!customerAddForm.offices.$pristine && customerAddForm.offices.$error.required) || (customerAddForm.$submitted && customerAddForm.offices.$error.required)" >This field is required</p>
+
+		<ul ng-show="(!customerAddForm.offices.$pristine && customerAddForm.offices.$error.pattern)" class="help-block">
+			<li> Please select valid office</li>
+		</ul>
+
+	</div>
+
+	<br>
+
+	<div class="form-group" ng-class="{'has-error': (!customerAddForm.email.$valid && !customerAddForm.email.$pristine) || (!customerAddForm.email.$valid && customerAddForm.$submitted) , 'has-success': customerAddForm.email.$valid && !customerAddForm.email.$pristine}">
+
+		<label>Email:</label>
+		<input class="form-control" type="text" name="email" placeholder="please enter customer email" ng-model="customer.customerData.email" ng-pattern="/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/" required>
+		<p class="help-block" ng-show="(!customerAddForm.email.$pristine && customerAddForm.email.$error.required) || (customerAddForm.$submitted && customerAddForm.email.$error.required)" >This field is required</p>
+
+		<ul ng-show="(!customerAddForm.email.$pristine && customerAddForm.email.$error.pattern)" class="help-block">
+			<li> Must contain '@'</li>
+			<li> Must not contain any special characters</li>
+			<li> Must be at least 3 characters but no more than 40</li>
+		</ul>
+
+	</div>
+	<br>
+	<div>
+		<label>Accounts Receivable Account:</label>
+
+		<select class="form-control" ng-model="customer.customerData.aracct" ng-options="araccount.glaccountnumber + ' - ' + araccount.glaccountname for araccount in customer.araccounts"></select>
+
+		<p class="help-block" ng-show="(!customerAddForm.aracct.$pristine && customerAddForm.aracct.$error.required) || (customerAddForm.$submitted && customerAddForm.aracct.$error.required)" >This field is required</p>
+
+		<ul ng-show="(!customerAddForm.aracct.$pristine && customerAddForm.aracct.$error.pattern)" class="help-block">
+			<li> Please select valid accounts receivable account</li>
+		</ul>
+
+	</div>
+
+	<br>
+
+	<div>
+		<label>Invoice Terms:</label>
+
+		<select class="form-control" ng-model="customer.customerData.invoiceterms" ng-options="invoiceterms.name for invoiceterms in customer.invoiceterms"></select>
+
+		<p class="help-block" ng-show="(!customerAddForm.invoiceterms.$pristine && customerAddForm.invoiceterms.$error.required) || (customerAddForm.$submitted && customerAddForm.invoiceterms.$error.required)" >This field is required</p>
+
+		<ul ng-show="(!customerAddForm.invoiceterms.$pristine && customerAddForm.invoiceterms.$error.pattern)" class="help-block">
+			<li> Please select valid invoice terms</li>
+		</ul>
+
+	</div>
+
+
+	</div>
+	<br>
+	
+	<button ng-disabled="register.disabled" class="btn btn-primary" type="submit">Create Customer</button>
+</form>
+
+
+<br>
+
+
+<div class = "jumbotron text-center" ng-show="customer.loading">
+	<span class = "glymphicon glymphicon-repeat spinner"></span>
+	<p>Loading...</p>
+
+</div>
+<br>
+
+<div class="row show-hide-message" ng-show="customer.successMsg">
+	<div class="alert alert-success">{{customer.successMsg}}</div>
+</div>
+	
+	<br>
+
+<div class="row show-hide-message" ng-show="customer.errorMsg">
+	<div class="alert alert-danger">{{customer.errorMsg}}</div>
+</div>

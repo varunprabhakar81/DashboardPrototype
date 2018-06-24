@@ -1,0 +1,107 @@
+<div class  "page-header" > 
+    <h1>Edit Customer</h1>
+</div>
+
+<br>
+
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link PrimaryInfoTab" ng-click="editCustomer.PrimaryInfoPhase();" ng-class="PrimaryInfoTab" data-toggle="tab" href="#" role="presentation" aria-controls="PrimaryInfoTab">Primary Information</a>
+    <a class="nav-item nav-link AdditionalInfoTab" ng-click="editCustomer.AdditionalInfoPhase();" ng-class="AdditionalInfoTab" data-toggle="tab" href="#" role="presentation" aria-controls="AdditionalInfoTab">Additional Information</a>
+  </div>
+</nav>
+
+<!-- Phase One: Name -->
+<form name="editCustomer.PrimaryInfoForm" ng-show="editCustomer.phase1" ng-submit="editCustomer.updatePrimaryInfo(newPrimaryInfo, editCustomer.PrimaryInfoForm.$valid)" novalidate>
+    <!-- Name Div -->
+    <div ng-class="{ 'has-success':(editCustomer.PrimaryInfoForm.customername.$valid && !editCustomer.PrimaryInfoForm.customername.$pristine), 'has-error':(!editCustomer.PrimaryInfoForm.customername.$valid && !editCustomer.PrimaryInfoForm.customername.$pristine) || (!PrimaryInfoForm.customername.$valid && PrimaryInfoForm.$submitted) }">
+        <!-- Name Input -->
+        <label>Customer Name:</label>
+        <input ng-disabled="editCustomer.disabled" class="form-control" type="text" name="customername" placeholder="please enter customer name" ng-model="newPrimaryInfo.customername" ng-pattern="/^[a-zA-Z\d\-_\s]+$/" required>
+        <!-- Name Validation -->
+        <p class="help-block" ng-show="(!editCustomer.PrimaryInfoForm.customername.$pristine && PrimaryInfoForm.customername.$error.required) || (editCustomer.PrimaryInfoForm.$submitted && editCustomer.PrimaryInfoForm.customername.$error.required)">This field is required</p>
+        <ul ng-show="(!editCustomer.PrimaryInfoForm.customername.$pristine && editCustomer.PrimaryInfoForm.customername.$error.pattern)" class="help-block">
+            <li> Must not contain any special characters</li>
+        </ul>
+    </div>
+    <br>
+
+    <div>
+        <label>Office(s):</label>
+
+        <!-- !** FIX SELECT PICKER -->
+     <!--   <select class="form-control selectpicker" title="Please select a Office ..." ng-model="newPrimaryInfo.offices" multiple data-live-search="true" data-live-search-style="begins" name="offices" ng-options="offices.officename for offices in editCustomer.offices track by offices._id"></select> -->
+
+     <select class="form-control" title="Please select a Office ..." ng-model="newPrimaryInfo.offices" multiple data-live-search="true" data-live-search-style="begins" name="offices" ng-options="offices.officename for offices in editCustomer.offices track by offices._id"></select>
+
+        <p class="help-block" ng-show="(!editCustomer.PrimaryInfoForm.offices.$pristine && PrimaryInfoForm.offices.$error.required) || (editCustomer.PrimaryInfoForm.$submitted && editCustomer.PrimaryInfoForm.offices.$error.required)">This field is required</p>
+        <ul ng-show="(!editCustomer.PrimaryInfoForm.offices.$pristine && editCustomer.PrimaryInfoForm.offices.$error.pattern)" class="help-block">
+            <li> Please enter valid offices</li>
+        </ul>
+    </div>
+    <br>
+
+
+
+    <div ng-class="{ 'has-success':(editCustomer.PrimaryInfoForm.email.$valid && !editCustomer.PrimaryInfoForm.email.$pristine), 'has-error':(!editCustomer.PrimaryInfoForm.email.$valid && !editCustomer.PrimaryInfoForm.email.$pristine) || (!PrimaryInfoForm.email.$valid && PrimaryInfoForm.$submitted) }">
+        <!-- Name Input -->
+        <label>Customer Email:</label>
+        <input ng-disabled="editCustomer.disabled" class="form-control" type="text" name="email" placeholder="please enter customer email" ng-model="newPrimaryInfo.email" ng-pattern="/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/" required>
+        <!-- Name Validation -->
+        <p class="help-block" ng-show="(!editCustomer.PrimaryInfoForm.email.$pristine && PrimaryInfoForm.email.$error.required) || (editCustomer.PrimaryInfoForm.$submitted && editCustomer.PrimaryInfoForm.email.$error.required)">This field is required</p>
+        <ul ng-show="(!editCustomer.PrimaryInfoForm.email.$pristine && editCustomer.PrimaryInfoForm.email.$error.pattern)" class="help-block">
+            <li> Please enter valid email format</li>
+        </ul>
+    </div>
+    <br>
+
+    <div>
+        <label>Accounts Receivable Account:</label>
+
+       <select ng-model="newPrimaryInfo.aracct" name="aracct" ng-options="araccount.glaccountnumber + ' - ' + araccount.glaccountname for araccount in editCustomer.araccounts track by araccount._id"></select>
+
+        <p class="help-block" ng-show="(!editCustomer.PrimaryInfoForm.aracct.$pristine && PrimaryInfoForm.aracct.$error.required) || (editCustomer.PrimaryInfoForm.$submitted && editCustomer.PrimaryInfoForm.aracct.$error.required)">This field is required</p>
+        <ul ng-show="(!editCustomer.PrimaryInfoForm.aracct.$pristine && editCustomer.PrimaryInfoForm.aracct.$error.pattern)" class="help-block">
+            <li> Please enter valid item accounts receivable account format</li>
+        </ul>
+    </div>
+    <br>
+
+    <div>
+        <label>Invoice Terms:</label>
+
+       <select ng-model="newPrimaryInfo.invoiceterms" name="aracct" ng-options="invoiceterms.name + ' - ' + invoiceterms.days for invoiceterms in editCustomer.invoiceterms track by invoiceterms.name"></select>
+
+        <p class="help-block" ng-show="(!editCustomer.PrimaryInfoForm.invoiceterms.$pristine && PrimaryInfoForm.invoiceterms.$error.required) || (editCustomer.PrimaryInfoForm.$submitted && editCustomer.PrimaryInfoForm.invoiceterms.$error.required)">This field is required</p>
+        <ul ng-show="(!editCustomer.PrimaryInfoForm.invoiceterms.$pristine && editCustomer.PrimaryInfoForm.invoiceterms.$error.pattern)" class="help-block">
+            <li> Please enter valid invoice terms format</li>
+        </ul>
+    </div>
+    <br>
+
+    <!-- Submit Button -->
+    <button ng-disabled="editCustomer.disabled" class="btn btn-primary" type="submit">Update</button>
+</form>
+
+<form name="editCustomer.AdditionalInfoForm" ng-show="editCustomer.phase2" ng-submit="editCustomer.updateAdditionalInfo(newAdditionalInfo, editCustomer.AdditionalInfoForm.$valid)" novalidate>
+    <div>Placeholder</div>
+
+    <br>
+</form>
+
+<br>
+
+<!-- Custom Success Message -->
+<div class="row show-hide-message" ng-show="editCustomer.successMsg">
+    <div class="alert alert-success">{{ editCustomer.successMsg }}</div>
+</div>
+<!-- Custom Success Message -->
+
+<br>
+
+<!-- Custom Error Message -->
+<div class="row show-hide-message" ng-show="editCustomer.errorMsg">
+    <div class="alert alert-danger">{{ editCustomer.errorMsg }}</div>
+</div>
+<!-- Custom Error Message -->
+

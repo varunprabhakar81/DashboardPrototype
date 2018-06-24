@@ -1,0 +1,171 @@
+<div class  "page-header" > 
+	<h1>Manage Daily Costs</h1>
+</div>
+
+<br>
+
+<style>  
+.custom-control-label::before,   
+.custom-control-label::after {   
+width: 2rem;  
+height: 2rem;  
+}  
+</style>  
+
+
+<!-- <div class="showmore">
+	<div class="col-lg-6">
+		<form>
+			<div class="form-row">
+				
+				<div class="col">
+					<span class="input-group-text"> Results to display:</span>
+				</div>
+				<div class="col">
+					<input type="text" class="form-control" ng-model="number">&nbsp&nbsp
+				</div>
+				<div class="col">
+					<button type="submit" ng-click="dailycost.showMore(number);" class="btn btn-success">Apply Filter</button>
+				</div>
+				<div class="col">
+					<button type="button" ng-click="dailycost.showAll(number);" class="btn btn-warning">Show All</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div> -->
+
+<!-- <nav class="navbar navbar-light">
+	<form class="form-inline">
+		<input class="form-control mr-sm-2" type="search" placeholder="Search for..." aria-label="Search" ng-model="searchKeyword">
+		<button class="btn btn-outline-secondary my-2 my-sm-0" type="submit" ng-click="dailycost.search(searchKeyword, number);">Search</button>&nbsp
+		<button class="btn btn-outline-secondary my-2 my-sm-0" type="button" ng-click="dailycost.clear();">Clear</button>&nbsp
+
+	</form>
+</nav> -->
+
+<!-- Total Search Results -->
+<!-- <div ng-show="searchFilter !== undefined">
+	<p><strong>Total results: </strong>{{ (dailycost.dailycost | filter: searchFilter).length }}</p>
+
+</div> -->
+
+<!-- Results Being Shown -->
+<!-- <div ng-show="searchFilter !== undefined">
+	<p><strong>Showing: </strong>{{( dailycost.dailycost | filter: searchFilter | limitTo: dailycost.limit).length }}</p>
+</div> -->
+
+
+
+<!-- Custom Error Message -->
+<!-- <div class="row show-hide-message" ng-show="dailycost.showMoreError">
+	<div class="alert alert-danger">{{ dailycost.showMoreError }}</div>
+</div> -->
+
+<!-- <br> -->
+
+<div class="panel panel-primary">
+<!-- 	<p align = "right">
+		<a href="/adddailycost" align="right">
+			<button type="button" ng-show="dailycost.editAccess" align="right" class="btn btn-primary">Add Employee</button>
+		</a>
+	</p> -->
+	<h2>Labor Costs</h2>
+	<div class="table-responsive-lg">
+		<table class="table table-striped">
+			<tr>
+				<th>Employee Name</th>
+				<th>Costs</th>
+				<th>Mon</th>
+				<th>Tue</th>
+				<th>Wed</th>
+				<th>Thu</th>
+				<th>Fri</th>
+				<th>Sat</th>
+				<th>Sun</th>	
+			</tr>
+			<tr ng-repeat="emp in dailycost.employees |orderBy: 'name' |filter: searchFilter |limitTo: dailycost.limit">
+				<td>{{emp.name }} - {{emp.position}}</td>
+				<td>$ {{emp.costs}}</td>
+<!-- 				<td>
+					<div class="input-group">
+                  		<div class="input-group-prepend">
+                    		<span class="input-group-text">$</span>
+                  		</div>
+                  		<input type="integer" class="form-control" ng-model="emp.costs" ng-disabled="true"> 
+                	</div> 
+
+				</td> -->
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-mon" ng-model="emp.mon" ng-click="dailycost.costchanged(emp,emp.mon,0);">
+					  <label class="custom-control-label" for="{{emp.name}}-mon"></label>
+					</div>
+				</td>
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-tue" ng-model="emp.tue" ng-click="dailycost.costchanged(emp,emp.tue,1);">
+					  <label class="custom-control-label" for="{{emp.name}}-tue"></label>
+					</div>				
+				</td>
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-wed" ng-model="emp.wed" ng-click="dailycost.costchanged(emp,emp.wed,2);">
+					  <label class="custom-control-label" for="{{emp.name}}-wed"></label>
+					</div>				
+				</td>
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-thu" ng-model="emp.thu" ng-click="dailycost.costchanged(emp,emp.thu,3);">
+					  <label class="custom-control-label" for="{{emp.name}}-thu"></label>
+					</div>				
+				</td>
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-fri" ng-model="emp.fri" ng-click="dailycost.costchanged(emp,emp.fri,4);">
+					  <label class="custom-control-label" for="{{emp.name}}-fri"></label>
+					</div>				
+				</td>
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-sat" ng-model="emp.sat" ng-click="dailycost.costchanged(emp,emp.sat,5);">
+					  <label class="custom-control-label" for="{{emp.name}}-sat"></label>
+					</div>				
+				</td>
+				<td>
+					<div class="custom-control form-control-lg custom-checkbox">
+					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-sun" ng-model="emp.sun" ng-click="dailycost.costchanged(emp,emp.sun,6);">
+					  <label class="custom-control-label" for="{{emp.name}}-sun"></label>
+					</div>				
+				</td>			
+			</tr>
+			
+			<tr>
+				<td></td>
+				<td></td>
+				<td>$ {{dailycost.days[0]}}</td>
+				<td>$ {{dailycost.days[1]}}</td>
+				<td>$ {{dailycost.days[2]}}</td>
+				<td>$ {{dailycost.days[3]}}</td>
+				<td>$ {{dailycost.days[4]}}</td>
+				<td>$ {{dailycost.days[5]}}</td>
+				<td>$ {{dailycost.days[6]}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+</div>
+
+<br>
+<!-- <div class="showmore">
+	<div class="col-lg-6">
+		<div class="input-group">
+			<span class="input-group-text"> Results to display:</span>
+			<input type="text" class="form-control" ng-model="number">&nbsp&nbsp
+			<button type="button" ng-click="dailycost.showMore(number);" class="btn btn-success ">Apply Filter</button>
+			<button type="button" ng-click="dailycost.showAll(number);" class="btn btn-warning">Show All</button>
+		</div>
+	</div>
+</div> -->
+
