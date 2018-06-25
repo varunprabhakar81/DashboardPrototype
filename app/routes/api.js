@@ -2003,7 +2003,7 @@ router.delete('/deleteinvoiceline/:id', function(req, res) {
 			req.body.laborcost == null ||
 			req.body.materialcost == null ||
 			req.body.totalcost == null) {
-			res.json({success: false, message:'Ensure all DailyCost mandatory fields are provided'})
+			res.json({success: false, message:'Ensure all Daily Cost mandatory fields are provided'})
 		}
 		else { 
 			dailycost.save(function(err){
@@ -2028,7 +2028,7 @@ router.delete('/deleteinvoiceline/:id', function(req, res) {
 					}
 				}
 				else {
-					res.json({success: true, dailycost:dailycost, message: 'DailyCost created!'});
+					res.json({success: true, dailycost:dailycost, message: 'Cost saved!'});
 				}
 			});
 		}
@@ -2112,48 +2112,55 @@ router.delete('/deleteinvoiceline/:id', function(req, res) {
     });
 
 
- 	// // Route to update/edit a invoice
-  //   router.put('/editinvoice', function(req, res) {
-  //       var editInvoice = req.body._id;
-  //       if (req.body.invoicename) var newInvoiceName = req.body.invoicename;
-  //       if (req.body.incomeacct) var newIncomeAcct= req.body.incomeacct;
+ 	// Route to update/edit a dailycost
+    router.put('/editdailycost', function(req, res) {
+        var editDailyCost = req.body._id;
+        if (req.body.employees) var newEmployees = req.body.employees;
+        if (req.body.laborcost) var newLaborcost= req.body.laborcost;
+        if (req.body.materialcost) var newMaterialcost= req.body.materialcost;
+        if (req.body.laborcost) var newTotalcost= req.body.totalcost;
 
+        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+            if (err) throw err; // Throw err if cannot connnect
+            // Check if logged in user is found in database
+            if (!mainUser) {
+                res.json({ success: false, message: "no user found" }); // Return erro
+            } else {
+            	if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+					DailyCost.findOne({ _id: editDailyCost }).populate('employees').exec(function(err, dailycost) {
+						if (err) throw err; // Throw error if cannot connect
+                        if (!dailycost) {
+                                res.json({ success: false, message: 'No dailycost found' }); // Return error
+                        } else {
+                        	if (newEmployees) {
+                                dailycost.employees = newEmployees; // Assign new name to user in database
+                            }
+                            if (newLaborcost) {
+                            	dailycost.laborcost= newLaborcost;
+                            }
+                            if (newMaterialcost) {
+                            	dailycost.materialcost= newMaterialcost;
+                            }
+                            if (newTotalcost) {
+                            	dailycost.totalcost= newTotalcost;
+                            }
 
-  //       User.findOne({ username: req.decoded.username }, function(err, mainUser) {
-  //           if (err) throw err; // Throw err if cannot connnect
-  //           // Check if logged in user is found in database
-  //           if (!mainUser) {
-  //               res.json({ success: false, message: "no user found" }); // Return erro
-  //           } else {
-  //           	if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
-		// 			Invoice.findOne({ _id: editInvoice }).populate('incomeacct').exec(function(err, invoice) {
-		// 				if (err) throw err; // Throw error if cannot connect
-  //                       if (!invoice) {
-  //                               res.json({ success: false, message: 'No invoice found' }); // Return error
-  //                       } else {
-  //                       	if (newInvoiceName) {
-  //                               invoice.invoicename = newInvoiceName; // Assign new name to user in database
-  //                           }
-
-  //                           if (newIncomeAcct) {
-  //                           	invoice.incomeacct= newIncomeAcct;
-  //                           }
-  //                               // Save changes
-  //                               invoice.save(function(err) {
-  //                                   if (err) {
-  //                                       console.log(err); // Log any errors to the console
-  //                                   } else {
-  //                                       res.json({ success: true, message: 'Invoice info has been updated!' }); // Return success message
-  //                                   }
-  //                               });
-  //                           }
-  //                       });
-  //                   } else {
-  //                       res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-  //                   }
-  //           }
-  //       });
-  //   });
+                            // Save changes
+                            dailycost.save(function(err) {
+                                if (err) {
+                                    console.log(err); // Log any errors to the console
+                                } else {
+                                    res.json({ success: true, message: 'DailyCost info has been updated!' }); // Return success message
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
+                }
+            }
+        });
+    });
 
 
 

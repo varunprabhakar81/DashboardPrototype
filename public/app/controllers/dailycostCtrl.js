@@ -13,35 +13,50 @@ angular.module('dailycostController', ['dailycostServices'])
     app.searchLimit = undefined; // Set the default search page results limit to zero
     app.showDailyCostEditModal = false;
     app.choiceMade = false;
+    app.editing = false;
 
     app.employeecosts = [];
 
     $scope.GLTypes = Config.DailyCostTypes;
 
-    app.days = [0,0,0,0,0,0,0];
+    app.dates = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    app.days = [{day:'mon', cost:0},
+                {day:'tue', cost:0},
+                {day:'wed', cost:0},
+                {day:'thu', cost:0},
+                {day:'fri', cost:0},
+                {day:'sat', cost:0},
+                {day:'sun', cost:0}];
+
+  //     date: { type: String, lowercase: true, required: true},
+  // employees: [{ type: Schema.Types.ObjectId, ref: 'Employee'}],
+  // laborcost:{ type: Number, required: true},
+  // materialcost:{ type: Number, required: true},
+  // totalcost:{ type: Number, required: true}
+
+    app.dailycostData = [{date:'mon',laborcost:0, employees : []},
+                         {date:'tue',laborcost:0, employees : []},
+                         {date:'wed',laborcost:0, employees : []},
+                         {date:'thu',laborcost:0, employees : []},
+                         {date:'fri',laborcost:0, employees : []},
+                         {date:'sat',laborcost:0, employees : []},
+                         {date:'sun',laborcost:0, employees : []}];
     
-    this.addDailyCost = function(dailycostData, valid) {
+    addDailyCost = function(dailycostData, valid) {
         app.disabled = true;
         app.errorMsg = false;
         app.successMsg = false;
         app.loading = true;
 
         if (valid) {
-            DailyCost.addDailyCost(app.dailycostData).then(function(data) {
-
+            DailyCost.addDailyCost(dailycostData).then(function(data) {
             if(data.data.success){
                 app.loading = false;
-                //Create Success Message
-                app.successMsg = data.data.message+'...Redirecting';
-                //Redirect to Home Message
-                $timeout(function(){
-                    $location.path('/managedailycosts');
-                },2000);
-                
+                app.successMsg = data.data.message;              
             }else {
                 app.disabled = false;
                 app.loading = false;
-                //Create Error Message
                 app.errorMsg = data.data.message;
             }
         });
@@ -62,7 +77,67 @@ angular.module('dailycostController', ['dailycostServices'])
             if (data.data.success) {
                 // Check which permissions the logged in user has
                 if (data.data.permission === 'admin' || data.data.permission === 'moderator') {
-                    app.dailycosts = data.data.dailycosts; // Assign dailycostss from database to variable
+
+                    if(data.data.dailycosts.length > 0) {
+                        app.dailycosts =  data.data.dailycosts; // Assign dailycostss from database to variable
+
+                        app.dailycostData = JSON.parse(JSON.stringify(app.dailycosts))
+
+                        // app.dailycostData = angular.copy(app.dailycosts);
+
+                        // app.dailycostData = app.dailycosts.slice();
+
+                        // console.log(app.dailycostData);
+
+                        if(app.dailycosts.length > 0) {
+                            for (var m =0; m<app.dailycosts.length; m++) {
+                                for (var l=0; l<app.dailycosts[m].employees.length; l++) {
+                                    var employee_found = app.employees.find(o => o._id === app.dailycosts[m].employees[l]._id);
+                                    employee_found.costs += app.dailycosts[m].employees[l].hourlycost;
+                                    switch(app.dailycosts[m].date) {
+                                        case 'mon':
+                                            employee_found.mon = true;
+                                            app.days[0].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[0].employees.push(employee_found);
+                                            break;
+                                        case 'tue':
+                                            employee_found.tue = true;
+                                            app.days[1].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[1].employees.push(employee_found);
+                                            break;
+                                        case 'wed':
+                                            employee_found.wed = true;
+                                            app.days[2].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[2].employees.push(employee_found);
+                                            break;
+                                        case 'thu':
+                                            employee_found.thu = true;
+                                            app.days[3].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[3].employees.push(employee_found);
+                                            break;
+                                        case 'fri':
+                                            employee_found.fri = true;
+                                            app.days[4].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[4].employees.push(employee_found);
+                                            break;
+                                        case 'sat':
+                                            employee_found.sat = true;
+                                            app.days[5].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[5].employees.push(employee_found);
+                                            break;
+                                        case 'sun':
+                                            employee_found.sun = true;
+                                            app.days[6].cost += app.dailycosts[m].employees[l].hourlycost;
+                                            // app.dailycostData[6].employees.push(employee_found);
+                                            break;
+                                    } 
+                                }
+                            }
+                        }
+                    }
+
+                    // console.log(app.dailycosts);
+
                     app.loading = false; // Stop loading icon
                     app.accessDenied = false; // Show table
 
@@ -77,6 +152,9 @@ angular.module('dailycostController', ['dailycostServices'])
                     app.errorMsg = 'Insufficient Permissions'; // Reject edit and delete options
                     app.loading = false; // Stop loading icon
                 }
+                // console.log(app.employees);
+                // console.log(app.days);
+                // console.log(app.dailycostData);
             } else {
                 app.errorMsg = data.data.message; // Set error message
                 app.loading = false; // Stop loading icon
@@ -119,8 +197,9 @@ angular.module('dailycostController', ['dailycostServices'])
         });
     }
 
-    getDailyCosts(); // Invoke function to get dailycostss from databases
     getEmployees(); // Invoke function to get dailycostss from databases
+    getDailyCosts(); // Invoke function to get dailycostss from databases
+    
 
     app.dailycostEditModal = function() {
         $("#glModal").modal({ backdrop: "static" }); // Open modal
@@ -148,31 +227,79 @@ angular.module('dailycostController', ['dailycostServices'])
 
     // Function: Show all results on page
     app.costchanged = function(employee, clicked, day) {
-        // console.log(app.employees);
-        // if(app.employeecosts) {
-            for (var i=0; i < app.employees.length; i++) {
-                if(app.employees[i]._id == employee._id) {
-                    if(clicked) {
-                        // if(app.employees[i].costs) {
-                            app.employees[i].costs += parseInt(employee.hourlycost);
-                            app.days[day] += parseInt(employee.hourlycost);
-                        // } else
-                        // {
-                        //     app.employees[i].costs = parseInt(employee.hourlycost);
-                        // }
-                    } else {
-                        if(app.employees[i].costs >= employee.hourlycost) {
-                            app.employees[i].costs -= parseInt(employee.hourlycost);
-                            app.days[day] -= parseInt(employee.hourlycost);
-                        } else
-                        {
-                            app.employees[i].costs = 0;
-                            app.days[day] = 0;
+        for (var i=0; i < app.employees.length; i++) {
+            if(app.employees[i]._id == employee._id) {
+                if(clicked) {
+                        var dayfound = app.days.find(o => o.day === day);
+
+                        if(dayfound){
+                            dayfound.cost += parseInt(employee.hourlycost);
+                        } else {
+                            //shouldn't happen
                         }
+
+                        app.days[day] += parseInt(employee.hourlycost);
+                        // console.log(app.dailycostData);
+                        // console.log(day);
+
+                        var datafound = app.dailycostData.find(o => o.date === day);
+
+                        if(datafound){
+                            datafound.laborcost += parseInt(employee.hourlycost);
+                            datafound.materialcost = 0;
+                            datafound.totalcost = datafound.laborcost + datafound.materialcost;
+                            datafound.employees.push(employee);
+                        } else {
+                            var newlaborcost = parseInt(employee.hourlycost);
+                            var newmaterialcost = 0;
+                            var newtotalcost = newlaborcost + newmaterialcost;
+                            app.dailycostData.push({date: day,
+                                                    laborcost: newlaborcost,
+                                                    employees:[employee],
+                                                    materialcost:newmaterialcost,
+                                                    totalcost:newtotalcost
+                                                    });
+                        }
+
+                        app.employees[i].costs += parseInt(employee.hourlycost);
+
+                } else {
+                    var dayfound2 = app.days.find(o => o.day === day);
+
+                    if(dayfound2){
+                        if(dayfound2.cost > employee.hourlycost) {
+                            dayfound2.cost -= parseInt(employee.hourlycost);
+                        } else {
+                            dayfound2.cost = 0;
+                        }
+                    } else {
+                        //shouldn't happen
                     }
-                    return;
+
+                    // console.log(app.dailycostData);
+                    
+                    var datafound2 = app.dailycostData.find(o => o.date === day);
+
+                    // console.log(datafound2);
+                    if(datafound2){
+                        datafound2.laborcost -= parseInt(employee.hourlycost);
+                        datafound2.totalcost = datafound2.laborcost + datafound2.materialcost;
+                        datafound2.employees.splice(datafound2.employees.findIndex(item=>item._id == employee._id),1);
+                    } else {
+                        app.dailycostData.push({date: day,laborcost:parseInt(employee.hourlycost), employees:[employee]});
+                    }
+
+                    app.employees[i].costs -= parseInt(employee.hourlycost);
+
+                    // console.log(datafound2);
+                    // // app.dailycostData[day].laborcost = app.days[day];
+                    // // app.dailycostData[day].employees.push(employee);
+
+                    // app.dailycostData[day].employees.splice(app.dailycostData[day].employees.findIndex(item => item._id === employee._id), 1)
                 }
+                return;
             }
+        }
        // }
 
         // app.employeecosts.push({employee:employee,costs:employee.hourlycost});
@@ -227,6 +354,60 @@ angular.module('dailycostController', ['dailycostServices'])
         $scope.searchByUsername = undefined;
         $scope.searchByEmail = undefined;
         $scope.searchByName = undefined;
+    };
+
+    // Function: Clear all fields
+    app.editenabled = function() {
+        app.editing = true;
+        // app.employees[0].mon = true;
+        // $scope.mon[app.employees[0]];
+    };
+
+    app.savecosts = function() {
+        for(var k=0; k < app.dailycostData.length; k++) {
+            // if(app.dailycostData[k].laborcost != 0) {
+                if(app.dailycosts) {
+                    var costs_found = app.dailycosts.find(o => o.date === app.dailycostData[k].date);
+
+                    if(costs_found){
+                        // for(var b=0; b<app.dailycostData[k].employees.length;b++) {
+                        //     if(costs_found.employees[b]._id != app.dailycostData[k].employees._id)
+                        //     costs_found.employees.push(app.dailycostData[k].employees[b]);
+                        //     costs_found.laborcost += app.dailycostData[k].employees[b].hourlycost;
+                            costs_found = app.dailycostData[k];
+                        // }
+                        
+                        // costs_found.materialcost = 0;
+                        // costs_found.totalcost = costs_found.laborcost + parseInt(costs_found.materialcost);
+
+                        DailyCost.editDailyCost(costs_found).then(function(data) {
+                            // Check if able to edit the user's name
+                            if (data.data.success) {
+                                app.successMsg = data.data.message; // Set success message
+                            } else {
+                                app.errorMsg = data.data.message; // Clear any error messages
+                                app.disabled = false; // Enable form for editing
+                            }
+                        });
+
+                    } else {
+                        // console.log(app.dailycostData[k]);
+                        // app.dailycostData[k].materialcost = 0;
+                        // app.dailycostData[k].totalcost = app.dailycostData[k].laborcost + app.dailycostData[k].materialcost;
+                        addDailyCost(app.dailycostData[k],true);
+                    }                    
+                } else {
+                    // app.dailycostData[k].materialcost = 0;
+                    // app.dailycostData[k].totalcost = app.dailycostData[k].laborcost + app.dailycostData[k].materialcost;
+                    addDailyCost(app.dailycostData[k],true);
+                }
+            // }
+        }
+        $timeout(function() {
+            app.editing = false;
+            location.reload();
+            // $location.path('transactions/managedailycosts');
+        }, 2000);
     };
 
     // Function: Perform an advanced, criteria-based search

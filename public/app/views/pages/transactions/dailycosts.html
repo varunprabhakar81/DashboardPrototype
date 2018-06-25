@@ -72,20 +72,24 @@ height: 2rem;
 	</p> -->
 	<h2>Labor Costs</h2>
 	<div class="table-responsive-lg">
+		<p align = "right">
+			<!-- <a href="/addemployee" align="right"> -->
+				<button type="button" ng-show="dailycost.editAccess && !dailycost.editing" align="right" class="btn btn-warning" ng-click="dailycost.editenabled();">Edit Costs</button>
+			<!-- </a> -->
+			<!-- <a href="/addemployee" align="right"> -->
+				<button type="button" ng-show="dailycost.editAccess && dailycost.editing" align="right" class="btn btn-success" ng-click="dailycost.savecosts();">Save Costs</button>
+			<!-- </a> -->
+		</p>
 		<table class="table table-striped">
 			<tr>
 				<th>Employee Name</th>
 				<th>Costs</th>
-				<th>Mon</th>
-				<th>Tue</th>
-				<th>Wed</th>
-				<th>Thu</th>
-				<th>Fri</th>
-				<th>Sat</th>
-				<th>Sun</th>	
+				<th ng-repeat="day in dailycost.dates">
+		      		{{ day }}
+		    	</th>	
 			</tr>
 			<tr ng-repeat="emp in dailycost.employees |orderBy: 'name' |filter: searchFilter |limitTo: dailycost.limit">
-				<td>{{emp.name }} - {{emp.position}}</td>
+				<td>{{emp.name }} - {{emp.position}} (rate @${{emp.hourlycost}}/hr)</td>
 				<td>$ {{emp.costs}}</td>
 <!-- 				<td>
 					<div class="input-group">
@@ -98,43 +102,43 @@ height: 2rem;
 				</td> -->
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-mon" ng-model="emp.mon" ng-click="dailycost.costchanged(emp,emp.mon,0);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-mon" ng-model="emp.mon" ng-click="dailycost.costchanged(emp,emp.mon,'mon');">
 					  <label class="custom-control-label" for="{{emp.name}}-mon"></label>
 					</div>
 				</td>
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-tue" ng-model="emp.tue" ng-click="dailycost.costchanged(emp,emp.tue,1);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-tue" ng-model="emp.tue" ng-click="dailycost.costchanged(emp,emp.tue,'tue');">
 					  <label class="custom-control-label" for="{{emp.name}}-tue"></label>
 					</div>				
 				</td>
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-wed" ng-model="emp.wed" ng-click="dailycost.costchanged(emp,emp.wed,2);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-wed" ng-model="emp.wed" ng-click="dailycost.costchanged(emp,emp.wed,'wed');">
 					  <label class="custom-control-label" for="{{emp.name}}-wed"></label>
 					</div>				
 				</td>
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-thu" ng-model="emp.thu" ng-click="dailycost.costchanged(emp,emp.thu,3);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-thu" ng-model="emp.thu" ng-click="dailycost.costchanged(emp,emp.thu,'thu');">
 					  <label class="custom-control-label" for="{{emp.name}}-thu"></label>
 					</div>				
 				</td>
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-fri" ng-model="emp.fri" ng-click="dailycost.costchanged(emp,emp.fri,4);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-fri" ng-model="emp.fri" ng-click="dailycost.costchanged(emp,emp.fri,'fri');">
 					  <label class="custom-control-label" for="{{emp.name}}-fri"></label>
 					</div>				
 				</td>
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-sat" ng-model="emp.sat" ng-click="dailycost.costchanged(emp,emp.sat,5);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-sat" ng-model="emp.sat" ng-click="dailycost.costchanged(emp,emp.sat,'sat');">
 					  <label class="custom-control-label" for="{{emp.name}}-sat"></label>
 					</div>				
 				</td>
 				<td>
 					<div class="custom-control form-control-lg custom-checkbox">
-					  <input type="checkbox" class="custom-control-input" id="{{emp.name}}-sun" ng-model="emp.sun" ng-click="dailycost.costchanged(emp,emp.sun,6);">
+					  <input ng-disabled="!dailycost.editing" type="checkbox" class="custom-control-input" id="{{emp.name}}-sun" ng-model="emp.sun" ng-click="dailycost.costchanged(emp,emp.sun,'sun');">
 					  <label class="custom-control-label" for="{{emp.name}}-sun"></label>
 					</div>				
 				</td>			
@@ -143,13 +147,13 @@ height: 2rem;
 			<tr>
 				<td></td>
 				<td></td>
-				<td>$ {{dailycost.days[0]}}</td>
-				<td>$ {{dailycost.days[1]}}</td>
-				<td>$ {{dailycost.days[2]}}</td>
-				<td>$ {{dailycost.days[3]}}</td>
-				<td>$ {{dailycost.days[4]}}</td>
-				<td>$ {{dailycost.days[5]}}</td>
-				<td>$ {{dailycost.days[6]}}</td>
+				<td>$ {{dailycost.days[0].cost}}</td>
+				<td>$ {{dailycost.days[1].cost}}</td>
+				<td>$ {{dailycost.days[2].cost}}</td>
+				<td>$ {{dailycost.days[3].cost}}</td>
+				<td>$ {{dailycost.days[4].cost}}</td>
+				<td>$ {{dailycost.days[5].cost}}</td>
+				<td>$ {{dailycost.days[6].cost}}</td>
 			</tr>
 			</tbody>
 		</table>
@@ -158,14 +162,21 @@ height: 2rem;
 </div>
 
 <br>
-<!-- <div class="showmore">
-	<div class="col-lg-6">
-		<div class="input-group">
-			<span class="input-group-text"> Results to display:</span>
-			<input type="text" class="form-control" ng-model="number">&nbsp&nbsp
-			<button type="button" ng-click="dailycost.showMore(number);" class="btn btn-success ">Apply Filter</button>
-			<button type="button" ng-click="dailycost.showAll(number);" class="btn btn-warning">Show All</button>
-		</div>
-	</div>
-</div> -->
+
+<div class = "jumbotron text-center" ng-show="dailycost.loading">
+	<span class = "glymphicon glymphicon-repeat spinner"></span>
+	<p>Loading...</p>
+
+</div>
+<br>
+
+<div class="row show-hide-message" ng-show="dailycost.successMsg">
+	<div class="alert alert-success">{{dailycost.successMsg}}</div>
+</div>
+	
+	<br>
+
+<div class="row show-hide-message" ng-show="dailycost.errorMsg">
+	<div class="alert alert-danger">{{dailycost.errorMsg}}</div>
+</div>
 

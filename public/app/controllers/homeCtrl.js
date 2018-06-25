@@ -1,28 +1,70 @@
  angular.module('homeController', ['authServices'])
 
-.controller('homeCtrl', function(Auth, $location) {
+.controller('homeCtrl', function(Auth, $location, DailyCost) {
 
       var app = this;
 
       app.loggedIn = false;
+      app.laborcosts = [];
+      app.totalcosts = [];
+      app.materialcosts = [];
+      app.lableset = [];
       
       if(Auth.isLoggedIn())
       {
         app.loggedIn = true;
 
-        labelset = ["January", "February", "March", "April", "May", "June", "July"];
-        app.dataset = [100, 500, 420, 1000, 80];
+        // labelset = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        DailyCost.getDailyCosts().then(function(data) {
+            // Check if able to get data from database
+            if (data.data.success) {
+              if(data.data.dailycosts.length > 0) {
+                console.log(data.data.dailycosts);
+                for(var i=0; i<data.data.dailycosts.length; i++) {
+                  app.lableset[i] = data.data.dailycosts[i].date;
+                  app.totalcosts[i] = data.data.dailycosts[i].totalcost;
+                  app.laborcosts[i] = data.data.dailycosts[i].laborcost;
+                  app.materialcosts[i] = data.data.dailycosts[i].materialcost;
+                }
+              }
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+            }
+        });
+
+
+        // app.dataset = [100, 500, 420, 1000, 80];
 
         var ctx = document.getElementById("invoiceChart");
         var invoiceChart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: labelset,
+            labels: app.lableset,
             datasets: [{
-              data: app.dataset,
+              label: 'Labor Costs',
+              data: app.laborcosts,
               lineTension: 0,
               backgroundColor: 'transparent',
               borderColor: '#007bff',
+              borderWidth: 4,
+              pointBackgroundColor: '#007bff'
+            }, 
+            {
+              label: 'Material Costs',
+              data: app.materialcosts,
+              lineTension: 0,
+              backgroundColor: 'transparent',
+              borderColor: '#997bff',
+              borderWidth: 4,
+              pointBackgroundColor: '#007bff'
+            }, 
+            {
+              label: 'Total Costs',
+              data: app.totalcosts,
+              lineTension: 0,
+              backgroundColor: 'transparent',
+              borderColor: '#129b1f',
               borderWidth: 4,
               pointBackgroundColor: '#007bff'
             }]
@@ -42,10 +84,45 @@
 
             },
             legend: {
-              display: false,
+              display: true,
+
             }
           }
         });
+
+        // var ctx = document.getElementById("employeeChart");
+        // var employeeChart = new Chart(ctx, {
+        //   type: 'line',
+        //   data: {
+        //     labels: app.lableset,
+        //     datasets: [{
+        //       data: app.dataset,
+        //       lineTension: 0,
+        //       backgroundColor: 'transparent',
+        //       borderColor: '#007bff',
+        //       borderWidth: 4,
+        //       pointBackgroundColor: '#007bff'
+        //     }]
+        //   },
+        //   options: {
+        //     scales: {
+        //       xAxes: [{
+        //         ticks: {
+        //           beginAtZero: true
+        //         }
+        //       }],
+        //       yAxes: [{
+        //         ticks: {
+        //           beginAtZero: true
+        //         }
+        //       }],
+
+        //     },
+        //     legend: {
+        //       display: false,
+        //     }
+        //   }
+        // });
 
       } else {
         app.loggedIn = false;
